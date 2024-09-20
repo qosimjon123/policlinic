@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>контент главной</h1>
+        {% if user.is_authenticated %}
+            {{ user.username }}
+        {% endif %}
+{% endblock content %}
