@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mt-3">Форма Просмотра записи <button class="clickbind btn btn-primary">Скачать запись</button></h2>
+    <p>ФИО: <strong class=" border-bottom">{{ patient.name }}</strong></p>
+    <p>Возраст: <strong class=" border-bottom">{{ patient.age }}</strong></p>
+    <p>Адрес: <strong class=" border-bottom">{{ patient.address }}</strong></p>
+    <p>Дата создание: <strong class=" border-bottom">{{ patient.upload_date }}</strong></p>
+    <p>Дата последного изменение: <strong class=" border-bottom">{{ patient.edited_date or 'Без изменений' }}</strong></p>
+
+    <p>Диагнозы:<br>
+        <div class="container border">
+            <strong>{{ diagnosis | safe }}</strong></p>
+        </div>
+    <p>Рецепты:<br>
+        <div class="container border">
+            <strong>{{ reception | safe }}</strong></p>
+        </div>
+    <p class="text-center">Анализы</p>
+    <div class="doted my-3 d-flex container">
+
+        {% if analysis_paths != [''] %}
+            {% for path in analysis_paths %}
+               <div class="border card" style="background-image: url({{ url_for('download', filename=path) }});"></div>
+            {% endfor %}
+        {% else %}
+            <h2 class="d-flex justify-content-center align-content-center">Фотки не найдены</h2>
+        {% endif %}
+    </div>
+
+    <p class="text-center">Фотки До</p>
+    <div class="doted my-3 d-flex container">
+        {% if image_before_paths != [''] %}
+            {% for path in image_before_paths %}
+                <div class="border card" style="background-image: url({{ url_for('download', filename=path) }});"></div>
+            {% endfor %}
+        {% else %}
+            <h2 class="d-flex justify-content-center align-content-center">Фотки не найдены</h2>
+        {% endif %}
+    </div>
+
+    <p class="text-center">Фотки После</p>
+    <div class="doted my-3 d-flex container">
+        {% if image_after_paths != [''] %}
+            {% for path in image_after_paths %}
+                <div class="border card" style="background-image: url({{ url_for('download', filename=path) }});"></div>
+            {% endfor %}
+        {% else %}
+            <h2 class="d-flex justify-content-center align-content-center">Фотки не найдены</h2>
+        {% endif %}
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+<script src="/static/main2.js">
+
+</script>
+
+<style>
+.text-center {
+    text-align: center;
+}
+
+.doted {
+    min-height: 100px;
+    border: black dotted;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 250px;
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    margin: 10px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.card.enlarged {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 90%;
+    height: 90%;
+    transform: translate(-50%, -50%); 
+    z-index: 2;
+    background-size: contain; 
+    background-repeat: no-repeat;
+}
+
+@media print {
+    .card {
+        min-width: 500px; /* Задайте размеры контейнера для печати */
+        min-height: 500px;
+        background-size: contain; 
+        background-repeat: no-repeat;
+        background-position: center;
+        margin: 10px;
+        cursor: default; /* Измените курсор на стандартный для печати */
+        z-index: 1;
+        
+        /* Предотвратите разрывы внутри контейнера */
+        page-break-inside: avoid; 
+        break-inside: avoid; /* Для более широкой поддержки */
+
+    }
+    .body {
+        background: #009FFF;  /* fallback for old browsers */
+        background: -webkit-linear-gradient(to right, #ec2F4B, #009FFF);  /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #ec2F4B, #009FFF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+
+
+        color: aliceblue;
+
+    }
+    .doted{
+        border: white dotted;
+    }
+    /* Также можно настроить правила для всего документа */
+
+}
+
+
+</style>
+{% endblock %}

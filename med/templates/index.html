@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block links %}
+    <link href='https://cdn.datatables.net/2.1.2/css/dataTables.bootstrap5.css' rel='stylesheet' type='text/css'>
+{% endblock %}
+{% block content %}
+<main class="container mt-5">
+    <table id="datatable" class="table table-bordered table-striped">
+        <thead>
+            <tr class="text-center">
+                <th scope="col">ФИО</th>
+                <th scope="col">Диагноз</th>
+                <th scope="col">Возраст</th>
+                <th scope="col">Дата загрузки</th>
+                <th scope="col">Дата изменение</th>
+                <th scope="col">Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for value in data %}
+            <tr>
+                <td class="patient-name">{{  value.name | truncate(20,true) }}</td>
+                <td>{{ value.diagnosis | safe | truncate(20,true) }}</td>
+                <td>{{ value.age }}</td>
+                <td>{{ value.upload_date  }}</td>
+                <td>{{ value.edited_date  or "Без изменений" }}</td>
+                <td class="text-center">
+                    <a class="btn btn-success view action-btn" href="{{ url_for('view', id=value.id) }}"></a>
+                    <a class="btn btn-primary edit mx-2 action-btn" href="{{ url_for('edit', id=value.id) }}"></a>
+                
+                    <button patientId="{{ value.id }}" type="button" class="btn btn-danger delete-btn action-btn " data-bs-toggle="modal" data-bs-target="#modalDeleteButton" href="{{ url_for('delete_patient', id = value.id) }}"></button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</main>
+    <div class="modal fade" id="modalDeleteButton" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Вы действительно хотите удалить запись с ФИО <span ><strong class="msg-for_del">....</strong></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+          <form method="POST" class="form-for-del">
+        <button type="submit" class="btn btn-danger del-request">Удалить</button>
+              </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.1.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.1.2/js/dataTables.bootstrap5.js"></script>
+<script src="static/main.js"></script>
+<script>
+    $(document).ready(() => {
+        $('#datatable').DataTable({
+            scrollX: true,
+            "aLengthMenu": [[5, 7, 10, 15, -1], [5, 7, 10, 15, "All"]]
+        });
+    });
+</script>
+<style>
+    .action-btn {
+        width: 40px;
+        height: 40px;
+        background-size: cover;
+        display: inline-block;
+    }
+    .view {
+        background-image: url('static/img/view.png');
+    }
+    .edit {
+        background-image: url('static/img/edit.png');
+    }
+    .delete-btn {
+        background-image: url('static/img/delete.png');
+    }
+
+
+</style>
+{% endblock %}

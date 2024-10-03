@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% block links %}
+    <link rel="stylesheet" href="/static/easymde.min.css">
+{% endblock %}
+{% block content %}
+<main class="container my-auto">
+    <form id="patientForm" method="post" enctype="multipart/form-data" class="dropzone" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="form-group my-2 col-md-4 col-sm-12">
+                {{ form.name.label  }}
+                {% if form.name.errors %}
+                    {{ form.name(class="form-control is-invalid") }}
+                {% else %}
+                    {{ form.name(class="form-control") }}
+                {% endif %}
+                {% for error in form.name.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group my-2 col-md-4 col-sm-12">
+                {{ form.age.label }}
+                {% if form.age.errors %}
+                    {{ form.age(class="form-control is-invalid") }}
+                {% else %}
+                    {{ form.age(class="form-control") }}
+                {% endif %}
+                {% for error in form.age.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group my-2 col-md-4 col-sm-12">
+                {{ form.address.label }}
+                {% if form.address.errors %}
+                    {{ form.address(class="form-control is-invalid") }}
+                {% else %}
+                    {{ form.address(class="form-control") }}
+                {% endif %}
+                {% for error in form.address.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group my-2 col-md-6 col-sm-12">
+                {{ form.diagnosis.label }}
+                {% if form.diagnosis.errors %}
+                    {{ form.diagnosis(class="form-control is-invalid") }}
+                {% else %}
+                    {{ form.diagnosis(class="form-control") }}
+                {% endif %}
+                {% for error in form.diagnosis.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group my-2 col-md-6 col-sm-12">
+                {{ form.reception.label }}
+                {% if form.reception.errors %}
+                    {{ form.reception(class="form-control is-invalid") }}
+                {% else %}
+                    {{ form.reception(class="form-control") }}
+                {% endif %}
+                {% for error in form.reception.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group my-2 col-md-4">
+                {{ form.analysis.label }}
+                {% if form.analysis.errors %}
+                    {{ form.analysis(class="form-control is-invalid", accept="image/png, image/gif, image/jpeg, image/jpg") }}
+                {% else %}
+                    {{ form.analysis(class="form-control", accept="image/png, image/gif, image/jpeg, image/jpg") }}
+                {% endif %}
+                {% for error in form.analysis.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div id="viewbox1" class="viewBox mt-1 justify-content-start analysis-preview flex-wrap d-flex"></div>
+            </div>
+
+            <div class="form-group my-2 col-md-4">
+                {{ form.image_before.label }}
+                {% if form.image_before.errors %}
+                    {{ form.image_before(class="form-control is-invalid", accept="image/png, image/gif, image/jpeg, image/jpg") }}
+                {% else %}
+                    {{ form.image_before(class="form-control", accept="image/png, image/gif, image/jpeg, image/jpg") }}
+                {% endif %}
+                {% for error in form.image_before.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="viewBox mt-1 justify-content-start img-before-preview flex-wrap d-flex" id="viewbox2"></div>
+            </div>
+
+            <div class="form-group my-2 col-md-4">
+                {{ form.image_after.label }}
+                {% if form.image_after.errors %}
+                    {{ form.image_after(class="form-control is-invalid", accept="image/png, image/gif, image/jpeg, image/jpg") }}
+                {% else %}
+                    {{ form.image_after(class="form-control", accept="image/png, image/gif, image/jpeg, image/jpg") }}
+                {% endif %}
+                {% for error in form.image_after.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+                <div class="viewBox mt-1 justify-content-start img-after-preview flex-wrap d-flex" id="viewbox3"></div>
+            </div>
+        </div>
+        <div class="form-group my-2">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</main>
+<style>
+    .viewBox {
+        min-height: 100px;
+        width: 100%;
+        border: #11557C dotted;
+        overflow: hidden;
+    }
+
+    .cards {
+        width: 80px;
+        height: 80px;
+        max-width: 80px;
+        max-height: 80px;
+        margin: 0.5rem;
+        overflow: hidden;
+    }
+
+    .cards img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+<script src="/static/easymde.min.js"></script>
+<script>
+    function setupImagePreview(inputId, previewId) {
+        const chooseFile = document.getElementById(inputId);
+        const imgPreview = document.getElementById(previewId);
+
+        chooseFile.addEventListener("change", function () {
+            const filesAll = chooseFile.files;
+            imgPreview.innerHTML = '';
+            for (let file of filesAll) {
+                if (file) {
+                    const fileReader = new FileReader();
+                    fileReader.readAsDataURL(file);
+                    fileReader.addEventListener("load", function () {
+                        imgPreview.innerHTML += '<div class="border cards"><img src="' + this.result + '" /></div>';
+                    });
+                }
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        setupImagePreview("analysis", "viewbox1");
+        setupImagePreview("image_before", "viewbox2");
+        setupImagePreview("image_after", "viewbox3");
+    });
+
+    const easyMDE = new EasyMDE({element: document.getElementById('diagnosis')});
+    const easyMDE2 = new EasyMDE({element: document.getElementById('reception')});
+
+</script>
+
+
+
+{% endblock %}
